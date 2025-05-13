@@ -54,7 +54,7 @@ function apiFunction(req, res) {
   function dataDone() {
     // convert posted data to data
     body = Buffer.concat(body).toString(); // convert to string
-    body = parseFormData(body); // parse the data in to an object if posted form
+    body = httpFormToObject(body); // parse the data in to an object if posted form
     if(isJSON(body)) body = JSON.parse(body); // parse the data if it is json
 
     req.session.data.counter = (req.session.data.counter || 0) + 1; // increment the counter of request made in this session
@@ -95,6 +95,6 @@ function apiFunction(req, res) {
   }
 }
 
-webserver.addMiddleware(session);
+webserver.addMiddleware('/api/', session);
 
 webserver.addHandler('/api/', apiFunction);

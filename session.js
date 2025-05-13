@@ -40,6 +40,7 @@ function session(req, res) {
     // if session is found in sessions object, only update accessedAt
     sessions[sessionId].accessedAt = Date.now();
   }
+  req.session = sessions[sessionId];
 }
 
-exports.default = session;
+module.exports = session;

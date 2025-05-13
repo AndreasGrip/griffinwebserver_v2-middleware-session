@@ -1,6 +1,6 @@
 {
   "name": "griffinwebserver_v2-session",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "session middleware for griffinwebserver_v2",
   "main": "session.js",
   "scripts": {
