@@ -1,0 +1,20 @@
+{
+  "name": "griffinwebserver_v2-session",
+  "version": "1.0.0",
+  "description": "session middleware for griffinwebserver_v2",
+  "main": "session.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "griffin",
+    "griffinwebserver"
+  ],
+  "author": "andreas.grip@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "cookie": "^1.0.2",
+    "crypto": "^1.0.1",
+    "griffinwebserver_v2": "^2.0.2"
+  }
+}
