@@ -7,7 +7,6 @@ Use the res.session.data object to store things like username etc.
 The res.session also contains information about time to live for session as well create time.
 Any changes you do to res.session will be saved and available on next request.
 
-
 Here is a more advance example using the session middleware to handle login among other things.
 
 ```javascript
