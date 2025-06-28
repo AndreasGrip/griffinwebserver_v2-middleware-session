@@ -30,8 +30,10 @@ function session(req, res) {
   // check for session id in cookie
   const cookies = req?.headers?.cookie ? cookie.parse(req.headers.cookie) : {};
   let sessionId = cookies?.session_id;
-  // if cookie is present, check for session in sessions object
-  if (!sessionId || !sessions[sessionId]) {
+  // if cookie is present, check for session in sessions object, that the data object exits and createdAt exists. Otherwise create new session.
+  if (!sessionId || !sessions[sessionId] || !sessions[sessionId].data || !sessions[sessionId].createdAt) {
+    // if old session is dammaged and will be replaced, remove the old one.
+    if(sessions[sessionId]) delete sessions[sessionId];
     sessionId = generateSessionId();
     sessions[sessionId] = { id: sessionId, expires: Date.now() + ttl, createdAt: Date.now(), accessedAt: Date.now(), data: {} };
     sessionsArray.push(sessions[sessionId]);
