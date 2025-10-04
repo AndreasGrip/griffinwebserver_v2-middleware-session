@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 const cookie = require('cookie');
 
 const ttl = 1000 * 60 * 60 * 12; // 12 hours in milliseconds
@@ -10,9 +10,10 @@ const sessionsArray = [];
 setInterval(pruneSessions, 60 * 1000); // prune every minute
 
 function pruneSessions() {
-  for (let i = 0; i < sessions.length; i++) {
-    if (sessions[i].createdAt + ttl >= Date.now()) { // if session is expired, delete it
-      delete sessions[i]; // delete it from object
+  for (let i = 0; i < sessionsArray.length; i++) {
+    // If session id partually deleted or session have expired or missing from session object, delete it
+    if (!sessionsArray[i].createdAt || sessionsArray[i].expires <= Date.now() || !sessions[sessionsArray[i]]) {
+      if (sessions[sessionsArray[i]]) delete sessions[sessionsArray[i]]; // delete it from object if it exists
       sessionsArray.splice(i, 1); // delete it from array
       i--;
     }
@@ -33,6 +34,7 @@ function session(req, res) {
   // if cookie is present, check for session in sessions object, that the data object exits and createdAt exists. Otherwise create new session.
   if (!sessionId || !sessions[sessionId] || !sessions[sessionId].data || !sessions[sessionId].createdAt) {
     // if old session is dammaged and will be replaced, remove the old one.
+    // TODO Also remove from sessionsArray before delete from sessions
     if(sessions[sessionId]) delete sessions[sessionId];
     sessionId = generateSessionId();
     sessions[sessionId] = { id: sessionId, expires: Date.now() + ttl, createdAt: Date.now(), accessedAt: Date.now(), data: {} };
