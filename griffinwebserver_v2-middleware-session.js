@@ -1,7 +1,9 @@
 const crypto = require('node:crypto');
 const cookie = require('cookie');
 
-const ttl = 1000 * 60 * 60 * 12; // 12 hours in milliseconds
+// Default TTL tiles
+let ttl = 1000 * 60 * 60 * 12; // 12 hours in milliseconds
+let ttlInactive = 1000 * 60 * 60; // 1hour of inactivity
 
 // sessions will be kept in both a array and object for convenience
 var sessions = {};
@@ -9,13 +11,20 @@ const sessionsArray = [];
 
 setInterval(pruneSessions, 60 * 1000); // prune every minute
 
+function setTtlInactive(seconds) {
+  ttlInactive = seconds * 1000; // convert to milliseconds
+}
+
+function setTtl(seconds) {
+  ttl = seconds * 1000;
+}
+
 function pruneSessions() {
-  for (let i = 0; i < sessionsArray.length; i++) {
+  for (let i = sessionsArray.length - 1; i >= 0; i--) {
     // If session id partually deleted or session have expired or missing from session object, delete it
-    if (!sessionsArray[i].createdAt || sessionsArray[i].expires <= Date.now() || !sessions[sessionsArray[i]]) {
-      if (sessions[sessionsArray[i]]) delete sessions[sessionsArray[i]]; // delete it from object if it exists
+    if (!sessionsArray[i].createdAt || sessionsArray[i].createdAt + ttl <= Date.now() || sessionsArray[i].accessedAt + ttlInactive <= Date.now() || !sessions[sessionsArray[i].id]) {
+      if (sessions[sessionsArray[i].id]) delete sessions[sessionsArray[i].id]; // delete it from object if it exists
       sessionsArray.splice(i, 1); // delete it from array
-      i--;
     }
   }
 }
@@ -57,3 +66,5 @@ function session(req, res) {
 }
 
 module.exports = session;
+module.exports.setTtl = setTtl;
+module.exports.setTtlInactive = setTtlInactive;

@@ -12,6 +12,8 @@ Here is a more advance example using the session middleware to handle login amon
 ```javascript
 const Webserver = require('griffinwebserver_v2');
 const session = require('griffinwebserver_v2-middleware-session');
+session.setTtlInactive(1*60*60); // if user is inactive for 1hour session will be killed (time in seconds 12hours is default if nothing is set)
+session.setTtl(12*60*60); // session can only live for 12hours. (time in seconds 1hour is default if nothing is set)
 const webserver = new Webserver('www/', 8080);
 webserver.start();
 
