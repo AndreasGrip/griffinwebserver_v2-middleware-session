@@ -38,11 +38,17 @@ function session(req, res) {
   if (!sessionId || !sessions[sessionId] || !sessions[sessionId].data || !sessions[sessionId].createdAt) {
     // if old session is dammaged and will be replaced, remove the old one.
     // TODO Also remove from sessionsArray before delete from sessions
-    if(sessions[sessionId]) delete sessions[sessionId];
+    if (sessions[sessionId]) delete sessions[sessionId];
     sessionId = generateSessionId();
-    sessions[sessionId] = { id: sessionId, expires: Date.now() + ttl, createdAt: Date.now(), accessedAt: Date.now(), data: {} };
+    sessions[sessionId] = { id: sessionId, createdAt: Date.now(), accessedAt: Date.now(), data: {} };
     sessionsArray.push(sessions[sessionId]);
-    res.setHeader('Set-Cookie', `session_id=${sessionId}; path=/; max-age=${ttl}; httpOnly; sameSite=strict`);
+    const sessionCookieString = `session_id=${sessionId}; path=/; max-age=${ttl / 1000}; httpOnly; sameSite=strict`;
+    // if no cookie is set set as empty array
+    let setCookie = res.getHeader('Set-Cookie') || [];
+    // convert to array if needed
+    if (!Array.isArray(setCookie)) setCookie = [setCookie];
+    setCookie.push(sessionCookieString);
+    res.setHeader('Set-Cookie', setCookie);
   } else {
     // if session is found in sessions object, only update accessedAt
     sessions[sessionId].accessedAt = Date.now();
