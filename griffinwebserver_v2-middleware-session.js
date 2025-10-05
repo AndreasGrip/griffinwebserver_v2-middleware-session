@@ -22,8 +22,11 @@ function pruneSessions() {
 
 // helper function
 function generateSessionId() {
-  let sessionId = crypto.randomBytes(32).toString('hex');
-  if (sessions[sessionId]) sessionId = generateSessionId(); // generate a new id if the generated id is already in use
+  let sessionId;
+  do {
+    // generate a new id. If the generated id is already in use, generate another one.
+    sessionId = crypto.randomBytes(32).toString('hex');
+  } while (sessions[sessionId]);
   return sessionId;
 }
 
